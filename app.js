@@ -25,7 +25,7 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.listen(3000);
+app.listen(process.env.port);
 console.log("Express Server running at port 3000");
 
 app.set('views', path.join(__dirname, 'views'));
