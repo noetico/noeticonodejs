@@ -1,0 +1,6 @@
+C:\Users\WorkBook\Source\Repos\bebe\obj\Debug\bebe.njsproj.AssemblyReference.cache
+C:\Users\WorkBook\Source\Repos\bebe\obj\Debug\bebe.njsproj.CoreCompileInputs.cache
+C:\Users\WorkBook\Source\Repos\bebe\bin\Microsoft.NodejsTools.WebRole.dll
+C:\Users\WorkBook\Documents\bebe\obj\Debug\bebe.njsproj.AssemblyReference.cache
+C:\Users\WorkBook\Documents\bebe\obj\Debug\bebe.njsproj.CoreCompileInputs.cache
+C:\Users\WorkBook\Documents\bebe\bin\Microsoft.NodejsTools.WebRole.dll

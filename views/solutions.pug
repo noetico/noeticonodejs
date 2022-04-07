@@ -1,0 +1,33 @@
+extends layout
+block content
+    div.forcefull(style="background-image: url('/images/office.jpg'); padding-top: 90px; background-size: cover" )
+        div.col-md-12
+            h4(style="padding: 12px;  background-color: rgba(255,255,255,0.6)") Solutions
+                p(style="font-size: 12px; color: gray")
+                    | Wide range of knowledge ensures cost-effective, time-sensitive problem solving
+                p
+    .row(style="padding: 60px")
+        .col-md-4
+            h6(style="font-weight: bold") Custom Applications 
+            p(style="color: gray") 
+                | Dreaming of your next website or some great app to boost your operational efficiency and optimize customer satisfaction? We have you covered.
+                | 
+            p
+        .col-md-4
+            h6(style="font-weight: bold") ERP Software Installations
+            p(style="color: gray") 
+                | Does your company use an existing system and your require major updates/upgrades or fresh roll-out? Get in touch and let's talk
+            p
+        .col-md-4
+            h6(style="font-weight: bold") Office Automation and Collaboration 
+            p(style="color: gray") 
+                | From open-source to commercial systems; we offer full lifecycle services for office products, file/document management systems 
+                | 
+            p
+    .row.d-flex.justify-content-center(style="padding: 10px; background-color: whitesmoke")
+        .col-md-6.justify-content-center
+            h4(style="display: block; text-align: center") Contact Us today and start planning your projects
+            hr
+            p(style="text-align: center")
+                button.btn.btn-outline(onclick="window.location.href='/contact'") Contact Us
+            

@@ -1,0 +1,33 @@
+extends layout
+block content
+    div.forcefull(style="background-image: url('/images/office.jpg'); padding-top: 90px; background-size: cover" )
+        div.col-md-12
+            h4(style="padding: 12px;  background-color: rgba(255,255,255,0.6)") Projects
+                p(style="font-size: 12px; color: gray")
+                    | Solving Problems; effectively and affordably
+                p
+    .row(style="padding: 60px")
+        .col-md-4
+            h6(style="font-weight: bold") Matik Business System 
+            p(style="color: gray") 
+                | Our flagship Business Software. Matik is already in production at multi-billion value businesses. Matik already provides solutions for multiple industries from retail to hospitality and services
+                | 
+            p
+        .col-md-4
+            h6(style="font-weight: bold") KodEx 
+            p(style="color: gray") 
+                | A multi-functional code generation system that is very resourceful for creating event tickets, barcodes and any kind of code for products.
+            p
+        .col-md-4
+            h6(style="font-weight: bold") Matik eCommerce and Barter System 
+            p(style="color: gray") 
+                | Matik also comes bundled with a complete e-commerce system with integration for payments and back-office order management
+                | 
+            p
+    .row.d-flex.justify-content-center(style="padding: 10px; background-color: whitesmoke")
+        .col-md-6.justify-content-center
+            h4(style="display: block; text-align: center") Contact Us today to Get on Matik!
+            hr
+            p(style="text-align: center")
+                button.btn.btn-outline(onclick="window.location.href='/contact'") Contact Us
+            

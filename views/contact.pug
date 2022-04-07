@@ -1,0 +1,20 @@
+extends layout
+block content
+    .container.col-md-4(style="padding-top: 90px")
+        form(method='post', action='contact/send')
+            h4 Contact Us
+            hr
+            .input-group
+            label Your Name
+            input.form-control(type='text', name='name')
+            .input-group
+            label Your Email
+            input.form-control(type='email', name='email')
+            .input-group
+            label Mail Subject
+            input.form-control(type='text', name='subject')
+            .input-group
+            label Your Message
+            textarea.form-control(name='message', placeholder='Enter mail message')
+            hr
+            button.btn.btn-dark(type='submit') Submit
