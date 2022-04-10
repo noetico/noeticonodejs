@@ -109,7 +109,7 @@ body('username', 'Empty email').trim().isLength({ min: 1 }).escape(),
 body('password', 'Password required').trim().isLength({ min: 5 }).escape(),
  (req, res) => {
 
-	const authurl = "http://localhost/token";
+	const authurl = "http://bestpremierpms.com/token";
 	const errors = validationResult(req);
 	
 		if (!errors.isEmpty()) {
@@ -179,8 +179,8 @@ app.post('/register', multer().none(),
 		  var postData = JSON.parse(JSON.stringify(req.body));
 		//  headers:{'Authorization': 'Bearer ' + authresponse.data.access_token }
 		//headers:{'Authorization': 'Bearer ' + tokenCode }
-		const url = "http://localhost/api/account/register";
-		const authurl = "http://localhost/token";
+		const url = "http://bestpremierpms.com/api/account/register";
+		const authurl = "http://bestpremierpms.com/token";
 	  
 	  let response =  axios({
 		  method: 'POST',
