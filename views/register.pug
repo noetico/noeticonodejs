@@ -1,0 +1,40 @@
+extends layout
+block content
+    .row.d-flex.justify-content-center
+        .col-md-8(style="padding: 90px")
+            h3.page-header Register
+            i(style="font-weight: bold; color: red")= msges
+            
+            
+            ul.errors
+                if errors
+                    each error, i in errors
+                        li.alert.alert-danger #{error.msg}
+            form(method='post', action="/register")
+                 
+                 .col-12
+                     label.col-12.pure-material-textfield-standard 
+                         input(name='name', type='text', placeholder=" ")
+                         span Full Name
+                 .col-12
+                     label.col-12.pure-material-textfield-standard 
+                         input.col-12(name='email', type='text', placeholder=" ")
+                         span Email
+                 .col-12
+                     label.col-12.pure-material-textfield-standard
+                         input(name='username', type='text', placeholder=" ")
+                         span Username
+                 .col-12
+                     label.col-12.pure-material-textfield-standard
+                          input(name='password', type='password', placeholder=" ")
+                          span Password
+                 .col-12
+                      label.col-12.pure-material-textfield-standard
+                          input(name='password2', type='password', placeholder=" ")
+                          span Confirm Password
+                 //- .form-group
+                 //- label Profile Image
+                 //- input.form-control(name='profileimage', type='file')
+                 hr
+                 input.btn.btn-primary(type='submit', name='submit', value='Register')
+        

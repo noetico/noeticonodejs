@@ -1,0 +1,24 @@
+extends layout
+block content
+    .row
+        .col-md-4(style="padding: 90px")
+            
+                h2.page-header Login
+                p Please Login to manage your account
+                i(style="font-weight: bold", name='validationmsges')= msges
+                form(method='post', action='/login')
+                     
+                     
+                     label.pure-material-textfield-standard 
+                         input(name='username', type='text', placeholder=" ")
+                         span Username/Email
+
+                     
+                     label.pure-material-textfield-standard 
+                         input.form-control(name='password', type='password', placeholder=" ")
+                         span Password
+                     
+                     hr
+                     input.btn.btn-primary(type='submit', name='submit', value='Register')
+        .col-md-8.forcefullheight(style="background-image: url('/images/office.jpg'); background-repeat: no-repeat; background-size: cover")
+        

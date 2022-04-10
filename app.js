@@ -1,21 +1,43 @@
 var express = require('express');
 var path = require('path');
-var bodyParser = require('body-parser');
+var sqlitedb = require('./sqlitedb.js');
+//var bodyParser = require('body-parser');
 var nodemailer = require('nodemailer');
-var app = express();
 var session = require('express-session');
-var passport = require('passport');
+var expressValidator = require('express-validator');
+var cors = require('cors');
+var corp = require('./corporate.js');
+var router = express.Router();
+const { body, validationResult } = require('express-validator');
 var LocalStrategy = require('passport-local').Strategy;
 var multer = require('multer');
+var passport = require('passport');
+var axios = require('axios');
 var flash = require('connect-flash');
 var mongo = require('mongodb');
 var mongoose = require('mongoose');
 var db = mongoose.connection;
-//var routes = require('./routes/index');
-//var users = require('./routes/users');
+var usrmodel = require('./users');
+var app = express();
+app.use(express.urlencoded({extended: true}));
+app.use(express.json());
+// app.use(bodyParser.urlencoded({ extended: false }));
+// app.use(bodyParser.json());
 
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(cors());
+app.use('/i', corp);
+
+
+var uploads = multer({
+	dest: './uploads'
+  });
+
+app.use(require('connect-flash')());
+app.use(function(req, res, next){
+	res.locals.messages = require('express-messages')(req, res);
+	next();
+});
+
 app.use(express.static(path.join(__dirname, "public")));
 app.use(session({
 	secret: 'secret',
@@ -25,7 +47,9 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.listen(process.env.port);
+// var routes = require('./routes/index');
+// var users = require('./routes/users');
+app.listen(process.env.port || 3000 || 8833);
 console.log("Express Server running at port 3000");
 
 app.set('views', path.join(__dirname, 'views'));
@@ -54,9 +78,160 @@ app.get('/team', function(req, res){
 	res.render('team');
 });
 
+app.get('/register', function(req, res){
+	res.render('register');
+});
+app.get('/login', function(req, res){
+	res.render('login');
+});
+
 app.get('/events', function(req, res){
 	res.render('events');
 });
+
+//POST TEMPLATE WITH MULTER OFF
+// app.post('/login', multer().none(),
+// body('username', 'Empty email').trim().isLength({ min: 1 }).escape(),
+// body('password', 'Password required').trim().isLength({ min: 5 }).escape(),
+// (req, res) => {
+// });
+
+app.post('/login', multer().none(),
+body('username', 'Empty email').trim().isLength({ min: 1 }).escape(),
+body('password', 'Password required').trim().isLength({ min: 5 }).escape(),
+ (req, res) => {
+
+	const authurl = "http://localhost/token";
+	const errors = validationResult(req);
+	
+		if (!errors.isEmpty()) {
+			console.log(errors);
+			res.render('login', {msges : "Validation failed, all fields required, please fill all field."});
+		
+			//return res.status(400).json({ errors: errors.array() });
+			}
+			else{
+				var postData = JSON.parse(JSON.stringify(req.body));
+				//var tokenCode = null;
+				
+				let response = axios({
+					method: 'POST',
+					
+					url: authurl, 
+					proxy: undefined,
+					data: postData, 
+					headers:{'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8'},
+					headers:{'Accept': 'application/json; charset=utf-8'},
+					
+				}).then((res) =>{
+					sqlitedb.run('INSERT INTO tokenkeys(tokenkey, date, days) VALUES(?, ?, ?)', [response.data.access_token, new Date(), response.data.expires_in ], (err) => {
+						if(err) {
+							return console.log(err.message); 
+							res.render('login', {msges : "An error occured"});
+		
+						}
+						console.log('Row was added to the table: ${this.lastID}');
+					});
+
+					res.render('login', {msges : "Authentication done, token added"});
+		
+		
+				  }).catch((error) => {
+					console.error(error);
+					res.render('login', {msges : "Validation failed, all fields required, please fill all field."});
+		
+				  })
+
+			}
+
+
+
+}
+
+);
+app.post('/register', multer().none(),
+	
+	  body('name', 'Empty name').trim().isLength({ min: 1 }).escape(),
+	  body('email', 'Empty email').trim().isLength({ min: 1 }).escape(),
+	  body('password', 'Password required').trim().isLength({ min: 5 }).escape(),
+	 // body('password2', 'Password confirm must macth passowrd').trim().isLength({ min: 5 }).escape(),
+	 (req, res) => {
+		// Extract the validation errors from a request.
+		const errors = validationResult(req);
+	
+		if (!errors.isEmpty()) {
+			console.log(errors);
+			res.render('register', {msges : "Validation failed, all fields required, please fill all field."});
+		//	swal("App", "Validation Failed", "error");
+			//return res.status(400).json({ errors: errors.array() });
+			}
+			else{
+		
+
+		  var postData = JSON.parse(JSON.stringify(req.body));
+		//  headers:{'Authorization': 'Bearer ' + authresponse.data.access_token }
+		//headers:{'Authorization': 'Bearer ' + tokenCode }
+		const url = "http://localhost/api/account/register";
+		const authurl = "http://localhost/token";
+	  
+	  let response =  axios({
+		  method: 'POST',
+		  
+		  url: url, 
+		  proxy: undefined,
+		  data: postData, 
+		  headers:{'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8'},
+		  headers:{'Accept': 'application/json; charset=utf-8'}
+	  }) 
+		.then((res) => {
+		  console.log(`statusCode: ${res.status}`)
+		  console.log(res)
+
+		  let authresponse =  axios({
+			method: 'POST',
+			proxy: undefined,
+			url: authurl, 
+			data: postData, 
+			headers:{'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8'},
+			headers:{'Accept': 'application/json; charset=utf-8'}
+	  
+
+
+		  }).then((res) =>{
+			sqlitedb.run('INSERT INTO tokenkeys(tokenkey, date, days) VALUES(?, ?, ?)', [authresponse.data.access_token, new Date(), authresponse.data.expires_in ], (err) => {
+				if(err) {
+					return console.log(err.message); 
+				}
+				console.log('Row was added to the table: ${this.lastID}');
+				res.render('register', {msges : "Registration done, Authentication key added"});
+		
+			})
+
+
+		  }).catch((error) => {
+			console.error(error);
+			res.render('register', {msges : "Validation failed, all fields required, please fill all field."});
+		
+
+		  })
+		  
+
+
+		})
+		.catch((error) => {
+		  console.error(error)
+		})
+		
+	}
+}
+	
+
+
+				
+
+	);
+
+	
 app.post('/contact/send', function(req, res){
 	transporter = nodemailer.createTransport({
 		service: 'gmail',
@@ -69,6 +244,8 @@ app.post('/contact/send', function(req, res){
 			
 		
 	});
+
+	
 	
 	var mailOpts = {
 		
@@ -80,11 +257,11 @@ app.post('/contact/send', function(req, res){
 	}
 	transporter.sendMail(mailOpts, function(error, info){
 		if(error){
-			console.log('error occured');
+			console.log(error.message);
 			res.redirect('/');
 		}else{
 			
-			console.load('Mail Sent');
+			console.log('Mail Sent');
 			res.redirect('/')
 		}
 		
