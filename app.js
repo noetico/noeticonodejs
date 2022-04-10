@@ -49,7 +49,11 @@ app.use(passport.session());
 
 // var routes = require('./routes/index');
 // var users = require('./routes/users');
-app.listen(process.env.port || 3000);
+var port = process.env.PORT || 3000;
+app.listen(port, "0.0.0.0", function() {
+console.log("Listening on Port 3000");
+});
+//app.listen(process.env.port, '0.0.0.0' || 5000);
 //console.log("Express Server running at port 3000");
 
 app.set('views', path.join(__dirname, 'views'));
