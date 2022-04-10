@@ -1,24 +1,24 @@
 extends layout
 block content
-    .row
-        .col-md-4(style="padding: 90px")
-            
+    .row.justify-content-center(style="padding: 60px; background-image: url('/images/office.jpg'); background-repeat: no-repeat; background-size: cover")
+        .col-md-4(style="background-color: rgba(255,255,255,0.8); ")
+            div(style="padding: 21px")
                 h2.page-header Login
                 p Please Login to manage your account
                 i(style="font-weight: bold", name='validationmsges')= msges
                 form(method='post', action='/login')
                      
                      
-                     label.pure-material-textfield-standard 
+                     label.pure-material-textfield-standard(style="display: block")  
                          input(name='username', type='text', placeholder=" ")
                          span Username/Email
 
                      
-                     label.pure-material-textfield-standard 
+                     label.pure-material-textfield-standard(style="display: block")  
                          input.form-control(name='password', type='password', placeholder=" ")
                          span Password
                      
                      hr
-                     input.btn.btn-primary(type='submit', name='submit', value='Register')
-        .col-md-8.forcefullheight(style="background-image: url('/images/office.jpg'); background-repeat: no-repeat; background-size: cover")
+                     input.btn.btn-dark(type='submit', name='submit', value='Login')
+        .col-md-8
         

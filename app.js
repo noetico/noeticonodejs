@@ -89,6 +89,10 @@ app.get('/events', function(req, res){
 	res.render('events');
 });
 
+app.get('/buytokens', function(req, res){
+	res.render('buytokens');
+});
+
 //POST TEMPLATE WITH MULTER OFF
 // app.post('/login', multer().none(),
 // body('username', 'Empty email').trim().isLength({ min: 1 }).escape(),

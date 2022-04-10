@@ -1,0 +1,15 @@
+extends layout
+block content 
+    .row.d-flex.justify-content-center(style="padding: 60px")
+        .col-md-4
+            h4 Buy Tokens
+            form(method='post', action="/buytokens")
+                 
+                 label.pure-material-textfield-standard(style="display: block") 
+                         input(name='tokenvalue', type='text', number, placeholder=" ")
+                         span Token Financial Value
+                 label.pure-material-textfield-standard(style="display: block") 
+                         input(name='tokenvalue', type='text', placeholder=" ")
+                         span For User
+                 input.btn.btn-dark(type='submit', name='submit', value='BuyToken')
+        .col-md-8

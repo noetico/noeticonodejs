@@ -7,7 +7,7 @@
   "scripts": {
     "build": "tsc --build",
     "clean": "tsc --build --clean",
-    "start": "node app.js"
+    "start": "NODE_ENV=production node app.js"
   },
   "devDependencies": {
     "@types/node": "^14.14.7",
