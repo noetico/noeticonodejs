@@ -119,7 +119,7 @@ body('password', 'Password required').trim().isLength({ min: 5 }).escape(),
 			//return res.status(400).json({ errors: errors.array() });
 			}
 			else{
-				var postData = JSON.parse(JSON.stringify(req.body));
+				var postData = JSON.parse(JSON.stringify({"UserName": req.UserName, "Password": req.Password}));
 				//var tokenCode = null;
 				
 				let response = axios({
@@ -160,9 +160,9 @@ body('password', 'Password required').trim().isLength({ min: 5 }).escape(),
 app.post('/register', multer().none(),
 	
 	  
-	  body('UserName', 'Empty email').trim().isLength({ min: 1 }).escape(),
-	  body('Password', 'Password required').trim().isLength({ min: 5 }).escape(),
-	 	body('ConfirmPassword', 'Password confirm must macth passowrd').trim().isLength({ min: 5 }).escape(),
+	  body('username', 'Empty email').trim().isLength({ min: 1 }).escape(),
+	  body('password', 'Password required').trim().isLength({ min: 5 }).escape(),
+	 	body('confirmpassword', 'Password confirm must macth passowrd').trim().isLength({ min: 5 }).escape(),
 	 (req, res) => {
 		// Extract the validation errors from a request.
 		const errors = validationResult(req);
@@ -176,7 +176,11 @@ app.post('/register', multer().none(),
 			else{
 		
 
-		  var postData = JSON.parse(JSON.stringify(req.body));
+		  var postData = JSON.stringify(req.body);
+		  var postdataToString = JSON.parse(postData);
+		  postdataToString['grant_type'] = "password";
+		  delete postdataToString['submit'];
+		  var PostBody = JSON.stringify(postdataToString);
 		//  headers:{'Authorization': 'Bearer ' + authresponse.data.access_token }
 		//headers:{'Authorization': 'Bearer ' + tokenCode }
 		const url = "https://wendy.solutions/api/account/register";
@@ -187,7 +191,7 @@ app.post('/register', multer().none(),
 		  
 		  url: url, 
 		  proxy: undefined,
-		  data: postData, 
+		  data: PostBody, 
 		  headers:{'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8'},
 		  headers:{'Accept': 'application/json; charset=utf-8'}
 	  }) 
@@ -199,7 +203,7 @@ app.post('/register', multer().none(),
 			method: 'POST',
 			proxy: undefined,
 			url: authurl, 
-			data: postData, 
+			data: PostBody, 
 			headers:{'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8'},
 			headers:{'Accept': 'application/json; charset=utf-8'}
 	  
