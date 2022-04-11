@@ -159,10 +159,10 @@ body('password', 'Password required').trim().isLength({ min: 5 }).escape(),
 );
 app.post('/register', multer().none(),
 	
-	  body('name', 'Empty name').trim().isLength({ min: 1 }).escape(),
-	  body('email', 'Empty email').trim().isLength({ min: 1 }).escape(),
-	  body('password', 'Password required').trim().isLength({ min: 5 }).escape(),
-	 // body('password2', 'Password confirm must macth passowrd').trim().isLength({ min: 5 }).escape(),
+	  
+	  body('UserName', 'Empty email').trim().isLength({ min: 1 }).escape(),
+	  body('Password', 'Password required').trim().isLength({ min: 5 }).escape(),
+	 	body('ConfirmPassword', 'Password confirm must macth passowrd').trim().isLength({ min: 5 }).escape(),
 	 (req, res) => {
 		// Extract the validation errors from a request.
 		const errors = validationResult(req);

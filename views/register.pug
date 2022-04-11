@@ -10,20 +10,16 @@ block content
                 
                 form(method='post', action="/register")
                      
+                     
                      label.pure-material-textfield-standard(style="display: block") 
-                             input(name='name', type='text', placeholder=" ")
-                             span Full Name
-                     label.pure-material-textfield-standard(style="display: block") 
-                             input(name='email', type='text', placeholder=" ")
+                             input(name='UserName', type='text', placeholder=" ")
                              span Email
+                     
                      label.pure-material-textfield-standard(style="display: block") 
-                             input(name='username', type='text', placeholder=" ")
-                             span Username
-                     label.pure-material-textfield-standard(style="display: block") 
-                              input(name='password', type='password', placeholder=" ")
+                              input(name='Password', type='password', placeholder=" ")
                               span Password
                      label.pure-material-textfield-standard(style="display: block") 
-                              input(name='password2', type='password', placeholder=" ")
+                              input(name='ConfirmPassword', type='password', placeholder=" ")
                               span Confirm Password
                      //- .form-group
                      //- label Profile Image
