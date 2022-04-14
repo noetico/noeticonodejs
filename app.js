@@ -1,7 +1,7 @@
 var express = require('express');
 var path = require('path');
-var sqlitedb = require('./sqlitedb.js');
-//var bodyParser = require('body-parser');
+//var sqlitedb = require('./sqlitedb.js');
+var bodyParser = require('body-parser');
 var nodemailer = require('nodemailer');
 var session = require('express-session');
 var expressValidator = require('express-validator');
@@ -14,11 +14,19 @@ var multer = require('multer');
 var passport = require('passport');
 var axios = require('axios');
 var flash = require('connect-flash');
+var fetch = require('node-fetch-commonjs');
+var request = require('request');
+var querystring = require('querystring');
+
 //var mongo = require('mongodb');
 // var mongoose = require('mongoose');
 // var db = mongoose.connection;
 // var usrmodel = require('./users');
 var app = express();
+app.use(bodyParser.json() );       // to support JSON-encoded bodies
+app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
+  extended: true
+})); 
 app.use(express.urlencoded({extended: true}));
 app.use(express.json());
 // app.use(bodyParser.urlencoded({ extended: false }));
@@ -31,6 +39,15 @@ app.use('/i', corp);
 var uploads = multer({
 	dest: './uploads'
   });
+var sqlite3 = require('sqlite3');
+let sqlitedb = new sqlite3.Database('./sdb.db', sqlite3.OPEN_READWRITE, (err) => {
+    if (err && err.code == "SQLITE_CANTOPEN") {
+        console.log("Getting error " + err);
+            exit(1);
+    }
+    
+});
+
 
 app.use(require('connect-flash')());
 app.use(function(req, res, next){
@@ -119,36 +136,40 @@ body('password', 'Password required').trim().isLength({ min: 5 }).escape(),
 			//return res.status(400).json({ errors: errors.array() });
 			}
 			else{
-				var postData = JSON.parse(JSON.stringify({"UserName": req.UserName, "Password": req.Password}));
-				//var tokenCode = null;
-				
-				let response = axios({
-					method: 'POST',
-					
-					url: authurl, 
-					proxy: undefined,
-					data: postData, 
-					headers:{'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8'},
-					headers:{'Accept': 'application/json; charset=utf-8'},
-					
-				}).then((res) =>{
-					sqlitedb.run('INSERT INTO tokenkeys(tokenkey, date, days) VALUES(?, ?, ?)', [response.data.access_token, new Date(), response.data.expires_in ], (err) => {
-						if(err) {
-							return console.log(err.message); 
-							res.render('login', {msges : "An error occured"});
-		
-						}
-						console.log('Row was added to the table: ${this.lastID}');
-					});
 
-					res.render('login', {msges : "Authentication done, token added"});
-		
-		
-				  }).catch((error) => {
-					console.error(error);
-					res.render('login', {msges : "Validation failed, all fields required, please fill all field."});
-		
-				  })
+					var form = {
+    username:  req.body.username,
+    password: req.body.password,
+    
+};
+
+var formData = querystring.stringify(form);
+
+
+				request.post({
+				uri: 'http://wendy.solutions/token',
+   				 headers: {
+    			  'Accept': 'application/json',
+     			 'Content-Type': 'application/x-www-form-urlencoded'
+   					 },
+   					 method: 'POST',
+   					 body: formData},
+
+             function(error, response, body){
+            	if (!error && response.statusCode == 200){
+					console.log(body);
+					var respBody = JSON.parse(body);
+					var access_tk = respBody['access_token'];
+					var expires_In = respBody['expires_in'];
+					var token_Type = respBody['token_type'];
+
+					console.log(access_tk);
+
+					res.render('login');
+
+            	}else{console.log(error);}
+            });
+
 
 			}
 
@@ -174,71 +195,71 @@ app.post('/register', multer().none(),
 			//return res.status(400).json({ errors: errors.array() });
 			}
 			else{
-		
 
-		  var postData = JSON.stringify(req.body);
-		  var postdataToString = JSON.parse(postData);
-		  postdataToString['grant_type'] = "password";
-		  delete postdataToString['submit'];
-		  var PostBody = JSON.stringify(postdataToString);
-		//  headers:{'Authorization': 'Bearer ' + authresponse.data.access_token }
-		//headers:{'Authorization': 'Bearer ' + tokenCode }
-		const url = "https://wendy.solutions/api/account/register";
-		const authurl = "https://wendy.solutions/token";
-	  
-	  let response =  axios({
-		  method: 'POST',
-		  
-		  url: url, 
-		  proxy: undefined,
-		  data: PostBody, 
-		  headers:{'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8'},
-		  headers:{'Accept': 'application/json; charset=utf-8'}
-	  }) 
-		.then((res) => {
-		  console.log(`statusCode: ${res.status}`)
-		  console.log(res)
+			
+var regResponse;
 
-		  let authresponse =  axios({
-			method: 'POST',
-			proxy: undefined,
-			url: authurl, 
-			data: PostBody, 
-			headers:{'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8'},
-			headers:{'Accept': 'application/json; charset=utf-8'}
-	  
+var form = {
+    username:  req.body.username,
+    password: req.body.password,
+    confirmpassword: req.body.confirmpassword,
+    grant_type: 'password'
+};
 
+var formData = querystring.stringify(form);
 
-		  }).then((res) =>{
-			sqlitedb.run('INSERT INTO tokenkeys(tokenkey, date, days) VALUES(?, ?, ?)', [authresponse.data.access_token, new Date(), authresponse.data.expires_in ], (err) => {
-				if(err) {
-					return console.log(err.message); 
-				}
-				console.log('Row was added to the table: ${this.lastID}');
-				res.render('register', {msges : "Registration done, Authentication key added"});
-		
-			})
+request.post(
+    {uri: 'http://wendy.solutions/api/account/register',
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/x-www-form-urlencoded'
+    },
+    method: 'POST',
+    body: formData},
+    function (error, response, body) {
+        if (!error && response.statusCode == 200) {
+            console.log(body);
+            regResponse = body;
 
+            request.post({
+				uri: 'http://wendy.solutions/token',
+   				 headers: {
+    			  'Accept': 'application/json',
+     			 'Content-Type': 'application/x-www-form-urlencoded'
+   					 },
+   					 method: 'POST',
+   					 body: formData},
 
-		  }).catch((error) => {
-			console.error(error);
-			res.render('register', {msges : "Validation failed, all fields required, please fill all field."});
-		
+             function(error, response, body){
+            	if (!error && response.statusCode == 200){
+					console.log(body);
+					var respBody = JSON.parse(body);
+					var access_tk = respBody['access_token'];
+					var expires_In = respBody['expires_in'];
+					var token_Type = respBody['token_type'];
 
-		  })
-		  
-
-
-		})
-		.catch((error) => {
-		  console.error(error)
-		})
-		
+					console.log(access_tk);
+					sqlitedb.run('INSERT INTO tokenkeys(tokenkey, days, date) VALUES(?, ?, ?)', [access_tk,expires_In, new Date()], (err) => {
+	if(err) {
+		return console.log(err.message); 
 	}
+	console.log('Row was added to the table: ${this.lastID}');
+})
+
+					res.render('register');
+
+            	}else{console.log(error);}
+            });
+
+        }else{console.log(error);}
+    }
+);
+		
+
 }
 	
 
-
+}
 				
 
 	);
